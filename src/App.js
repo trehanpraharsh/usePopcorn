@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const tempMovieData = [
   {
@@ -48,10 +48,50 @@ const tempWatchedData = [
 ];
 
 //Key = a579345d
+const KEY = "a579345d";
 
 export default function App() {
-  const [movies, setMovies] = useState(tempMovieData);
-  const [watched, setWatched] = useState(tempWatchedData);
+  const [movies, setMovies] = useState([]);
+  const [watched, setWatched] = useState([]);
+
+  //* Here we will use async function inside as we can't passs async function directly, as the sole motive of using useEffect is to synchronously update the state.
+  // useEffect(function () {
+  //   fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=friends`)
+  //     .then((res) => res.json())
+  //     .then((data) => setMovies(data.Search));
+  // }, []);
+
+  const tempQuery = "friends";
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(function () {
+    async function fetchMovies() {
+      try {
+        setIsLoading(true);
+        const res = await fetch(
+          `http://www.omdbapi.com/?apikey=${KEY}&s=${tempQuery}`
+        );
+
+        if (!res.ok) {
+          throw new Error("Something went wrong with fetching movies!");
+        }
+
+        const data = await res.json();
+        if (data.Response === "False") {
+          throw new Error("Movie not found");
+        }
+        setMovies(data.Search);
+        console.log(data);
+      } catch (err) {
+        console.error(err.message);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchMovies();
+  }, []);
 
   return (
     <>
@@ -73,7 +113,14 @@ export default function App() {
         /> */}
 
         <Box>
-          <MovieList movies={movies} />
+          {/*//* Covered all the cases, i.e.,when the movies are loading then loader is diplayed. */}
+          {isLoading && <Loader />}
+
+          {/*//* When there's no error and movies are also loaded then display the MovieList. */}
+          {!isLoading && !error && <MovieList movies={movies} />}
+
+          {/*//* When an error is encountered. */}
+          {error && <ErrorMessage message={error} />}
         </Box>
 
         <Box>
@@ -82,6 +129,18 @@ export default function App() {
         </Box>
       </Main>
     </>
+  );
+}
+
+function Loader() {
+  return <p className="loader">Loading...</p>;
+}
+
+function ErrorMessage({ message }) {
+  return (
+    <p className="error">
+      <span>⛔️</span> {message}
+    </p>
   );
 }
 
@@ -95,14 +154,14 @@ function NavBar({ children }) {
 }
 
 function Search() {
-  const [query, setQuery] = useState("");
+  const [tempQuery, setQuery] = useState("");
 
   return (
     <input
       className="search"
       type="text"
       placeholder="Search movies..."
-      value={query}
+      value={tempQuery}
       onChange={(e) => setQuery(e.target.value)}
     />
   );
