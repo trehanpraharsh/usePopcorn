@@ -51,6 +51,7 @@ const tempWatchedData = [
 const KEY = "a579345d";
 
 export default function App() {
+  const [query, setQuery] = useState("friends");
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
 
@@ -61,42 +62,51 @@ export default function App() {
   //     .then((data) => setMovies(data.Search));
   // }, []);
 
-  const tempQuery = "friends";
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(function () {
-    async function fetchMovies() {
-      try {
-        setIsLoading(true);
-        const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${KEY}&s=${tempQuery}`
-        );
+  useEffect(
+    function () {
+      async function fetchMovies() {
+        try {
+          setIsLoading(true);
+          setError("");
+          const res = await fetch(
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+          );
 
-        if (!res.ok) {
-          throw new Error("Something went wrong with fetching movies!");
-        }
+          if (!res.ok) {
+            throw new Error("Something went wrong with fetching movies!");
+          }
 
-        const data = await res.json();
-        if (data.Response === "False") {
-          throw new Error("Movie not found");
+          const data = await res.json();
+          if (data.Response === "False") {
+            throw new Error("Movie not found");
+          }
+          setMovies(data.Search);
+        } catch (err) {
+          console.error(err.message);
+          setError(err.message);
+        } finally {
+          setIsLoading(false);
         }
-        setMovies(data.Search);
-        console.log(data);
-      } catch (err) {
-        console.error(err.message);
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
       }
-    }
-    fetchMovies();
-  }, []);
+
+      if (query.length < 3) {
+        setMovies([]);
+        setError("");
+        return;
+      }
+
+      fetchMovies();
+    },
+    [query]
+  );
 
   return (
     <>
       <NavBar>
-        <Search />
+        <Search query={query} setQuery={setQuery} />
         <NumResults movies={movies} />
       </NavBar>
 
@@ -153,15 +163,13 @@ function NavBar({ children }) {
   );
 }
 
-function Search() {
-  const [tempQuery, setQuery] = useState("");
-
+function Search({ query, setQuery }) {
   return (
     <input
       className="search"
       type="text"
       placeholder="Search movies..."
-      value={tempQuery}
+      value={query}
       onChange={(e) => setQuery(e.target.value)}
     />
   );
