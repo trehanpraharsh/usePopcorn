@@ -10,6 +10,12 @@
   --color-red-dark: #e03131;
 }
 
+.box::-webkit-scrollbar,
+.list::-webkit-scrollbar {
+  display: none;
+  scroll-behavior: smooth;
+}
+
 * {
   margin: 0;
   padding: 0;
