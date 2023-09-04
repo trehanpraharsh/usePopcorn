@@ -52,7 +52,7 @@ const tempWatchedData = [
 const KEY = "a579345d";
 
 export default function App() {
-  const [query, setQuery] = useState("friends");
+  const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [selectedID, setSelectedID] = useState(null);
@@ -85,12 +85,15 @@ export default function App() {
 
   useEffect(
     function () {
+      const controller = new AbortController();
+
       async function fetchMovies() {
         try {
           setIsLoading(true);
           setError("");
           const res = await fetch(
-            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+            { signal: controller.signal }
           );
 
           if (!res.ok) {
@@ -102,9 +105,12 @@ export default function App() {
             throw new Error("Movie not found");
           }
           setMovies(data.Search);
+          setError("");
         } catch (err) {
-          console.error(err.message);
-          setError(err.message);
+          if (err.message !== "AbortMessage") {
+            // console.error(err.message);
+            setError(err.message);
+          }
         } finally {
           setIsLoading(false);
         }
@@ -116,6 +122,8 @@ export default function App() {
         return;
       }
 
+      //in order to close the movie prompt while searching a new movie
+      handleCloseMovie();
       fetchMovies();
     },
     [query]
@@ -368,8 +376,33 @@ function MovieDetails({ selectedID, onCloseMovie, onAddWatched, watched }) {
 
   useEffect(
     function () {
+      function callback(e) {
+        if (e.code === "Escape") {
+          onCloseMovie();
+          // console.log("CLOSING");
+        }
+      }
+
+      document.addEventListener("keydown", callback);
+
+      return function () {
+        document.removeEventListener("keydown", callback);
+      };
+    },
+    [onCloseMovie]
+  );
+
+  useEffect(
+    function () {
       if (!title) return;
       document.title = `${title}`;
+
+      //* Cleanup function
+      return function () {
+        document.title = "usePopcorn";
+        //has the value of the title stored even after unmounting due to js concept of closures as the useEffect function knows the vale of title so it uses it from the past.
+        // console.log(title);
+      };
     },
     [title]
   );
