@@ -1,6 +1,54 @@
 import { useEffect, useState } from "react";
 import StarRating from "./StarRating";
 
+const tempMovieData = [
+  {
+    imdbID: "tt1375666",
+    Title: "Inception",
+    Year: "2010",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
+  },
+  {
+    imdbID: "tt0133093",
+    Title: "The Matrix",
+    Year: "1999",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg",
+  },
+  {
+    imdbID: "tt6751668",
+    Title: "Parasite",
+    Year: "2019",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
+  },
+];
+
+const tempWatchedData = [
+  {
+    imdbID: "tt1375666",
+    Title: "Inception",
+    Year: "2010",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
+    runtime: 148,
+    imdbRating: 8.8,
+    userRating: 10,
+  },
+  {
+    imdbID: "tt0088763",
+    Title: "Back to the Future",
+    Year: "1985",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BZmU0M2Y1OGUtZjIxNi00ZjBkLTg1MjgtOWIyNThiZWIwYjRiXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",
+    runtime: 116,
+    imdbRating: 8.5,
+    userRating: 9,
+  },
+];
+
+//Key = a579345d
 const KEY = "a579345d";
 
 export default function App() {
@@ -8,6 +56,13 @@ export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [selectedID, setSelectedID] = useState(null);
+
+  //* Here we will use async function inside as we can't passs async function directly, as the sole motive of using useEffect is to synchronously update the state.
+  // useEffect(function () {
+  //   fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=friends`)
+  //     .then((res) => res.json())
+  //     .then((data) => setMovies(data.Search));
+  // }, []);
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -53,6 +108,7 @@ export default function App() {
           setError("");
         } catch (err) {
           if (err.message !== "AbortMessage") {
+            // console.error(err.message);
             setError(err.message);
           }
         } finally {
@@ -66,6 +122,7 @@ export default function App() {
         return;
       }
 
+      //in order to close the movie prompt while searching a new movie
       handleCloseMovie();
       fetchMovies();
     },
@@ -80,13 +137,27 @@ export default function App() {
       </NavBar>
 
       <Main>
+        {/* Another way to avoid prop drilling - Also used with libraries of React like React Router etc. */}
+        {/* <Box element={<MovieList movies={movies} />} />
+        <Box
+          element={
+            <>
+              <WatchedSummary watched={watched} />
+              <WatchedMovieList watched={watched} />
+            </>
+          }
+        /> */}
+
         <Box>
+          {/*//* Covered all the cases, i.e.,when the movies are loading then loader is diplayed. */}
           {isLoading && <Loader />}
 
+          {/*//* When there's no error and movies are also loaded then display the MovieList. */}
           {!isLoading && !error && (
             <MovieList movies={movies} onSelectMovie={handleMovieSelect} />
           )}
 
+          {/*//* When an error is encountered. */}
           {error && <ErrorMessage message={error} />}
         </Box>
 
@@ -183,6 +254,47 @@ function Box({ children }) {
   );
 }
 
+//* We Won't be needing these two boxes seperately as we can form a single reusable component by just using the children prop. It will also solve the prop-drilling issue for the WatchedBox Component.
+
+// function ListBox({ children }) {
+//   const [isOpen1, setIsOpen1] = useState(true);
+
+//   return (
+//     <div className="box">
+//       <button
+//         className="btn-toggle"
+//         onClick={() => setIsOpen1((open) => !open)}
+//       >
+//         {isOpen1 ? "–" : "+"}
+//       </button>
+//       {isOpen1 && children}
+//     </div>
+//   );
+// }
+
+// function WatchedBox() {
+//   const [watched, setWatched] = useState(tempWatchedData);
+//   const [isOpen2, setIsOpen2] = useState(true);
+
+//   return (
+//     <div className="box">
+//       <button
+//         className="btn-toggle"
+//         onClick={() => setIsOpen2((open) => !open)}
+//       >
+//         {isOpen2 ? "–" : "+"}
+//       </button>
+//       {isOpen2 && (
+//         <>
+//           <WatchedSummary watched={watched} />
+
+//           <WatchedMovieList watched={watched} />
+//         </>
+//       )}
+//     </div>
+//   );
+// }
+
 function MovieList({ movies, onSelectMovie }) {
   return (
     <ul className="list list-movies">
@@ -267,6 +379,7 @@ function MovieDetails({ selectedID, onCloseMovie, onAddWatched, watched }) {
       function callback(e) {
         if (e.code === "Escape") {
           onCloseMovie();
+          // console.log("CLOSING");
         }
       }
 
@@ -287,6 +400,8 @@ function MovieDetails({ selectedID, onCloseMovie, onAddWatched, watched }) {
       //* Cleanup function
       return function () {
         document.title = "usePopcorn";
+        //has the value of the title stored even after unmounting due to js concept of closures as the useEffect function knows the vale of title so it uses it from the past.
+        // console.log(title);
       };
     },
     [title]
