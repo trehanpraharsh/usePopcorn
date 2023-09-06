@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import StarRating from "./StarRating";
 
 const KEY = "a579345d";
@@ -150,6 +150,31 @@ function NavBar({ children }) {
 }
 
 function Search({ query, setQuery }) {
+  //? not the ideal way - as we are directly accesing elements of the dom tree
+  // useEffect(function () {
+  //   const el = document.querySelector(".search");
+  //   el.focus();
+  // }, []);
+  const inputEl = useRef(null);
+
+  useEffect(
+    function () {
+      function callbackF(e) {
+        if (document.activeElement === inputEl.current) return;
+
+        if (e.code === "Enter") {
+          inputEl.current.focus();
+          setQuery("");
+        }
+      }
+
+      document.addEventListener("keydown", callbackF);
+
+      return () => document.addEventListener("keydown", callbackF);
+    },
+    [setQuery]
+  );
+
   return (
     <input
       className="search"
@@ -157,6 +182,7 @@ function Search({ query, setQuery }) {
       placeholder="Search movies..."
       value={query}
       onChange={(e) => setQuery(e.target.value)}
+      ref={inputEl}
     />
   );
 }
