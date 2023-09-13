@@ -31,7 +31,7 @@ export default function App() {
 
   function handleAddWatched(movie) {
     setWatched((watched) =>
-      watched?.length === 0 ? [movie] : [...watched, movie]
+      watched.length === 0 ? [movie] : [...watched, movie]
     );
 
     //*As we want to update it everytime the watched array is updated
