@@ -1,8 +1,12 @@
+//* Always remember to name the api key in .env file when app is created using create react app starting with "REACT_APP_yourApiKeyName"
+
 import { useEffect, useRef, useState } from "react";
 import StarRating from "./StarRating";
 import { useMovies } from "./useMovies";
 
-const KEY = "a579345d";
+// const KEY = "a579345d";
+//! Always remember to name the api key in .env file when app is created using create react app starting with "REACT_APP_yourApiKeyName"
+const KEY = process.env.REACT_APP_OMDB_API_KEY;
 
 export default function App() {
   const [query, setQuery] = useState("");

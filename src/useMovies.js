@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 
-const KEY = "a579345d";
+// const KEY = "a579345d";
+//! Always remember to name the api key in .env file when app is created using create react app starting with "REACT_APP_yourApiKeyName"
+const KEY = process.env.REACT_APP_OMDB_API_KEY;
 
 export function useMovies(query, callback) {
   const [movies, setMovies] = useState([]);
