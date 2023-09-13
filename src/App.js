@@ -30,14 +30,16 @@ export default function App() {
   }
 
   function handleAddWatched(movie) {
-    setWatched((watched) => [...watched, movie]);
+    setWatched((watched) =>
+      watched?.length === 0 ? [movie] : [...watched, movie]
+    );
 
     //*As we want to update it everytime the watched array is updated
     // localStorage.setItem("watched", JSON.stringify([...watched, movie]));
   }
 
   function handleDeleteWatched(id) {
-    setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
+    setWatched((watched) => watched?.filter((movie) => movie.imdbID !== id));
   }
 
   useEffect(
