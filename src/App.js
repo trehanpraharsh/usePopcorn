@@ -30,9 +30,7 @@ export default function App() {
   }
 
   function handleAddWatched(movie) {
-    setWatched((watched) =>
-      watched.length === 0 ? [movie] : [...watched, movie]
-    );
+    setWatched((watched) => (watched?.length ? [...watched, movie] : [movie]));
 
     //*As we want to update it everytime the watched array is updated
     // localStorage.setItem("watched", JSON.stringify([...watched, movie]));
