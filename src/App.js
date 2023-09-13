@@ -159,7 +159,7 @@ function Logo() {
 function NumResults({ movies }) {
   return (
     <p className="num-results">
-      Found <strong>{movies.length}</strong> results
+      Found <strong>{movies?.length}</strong> results
     </p>
   );
 }
@@ -214,8 +214,8 @@ function MovieDetails({ selectedID, onCloseMovie, onAddWatched, watched }) {
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState("");
 
-  const isWatched = watched.map((movie) => movie.imdbID).includes(selectedID);
-  const watchedUserRating = watched.find(
+  const isWatched = watched?.map((movie) => movie.imdbID).includes(selectedID);
+  const watchedUserRating = watched?.find(
     (movie) => movie.imdbID === selectedID
   )?.userRating;
 
@@ -353,12 +353,12 @@ function MovieDetails({ selectedID, onCloseMovie, onAddWatched, watched }) {
 
 function WatchedSummary({ watched }) {
   const avgImdbRating = average(
-    watched.map((movie) => movie.imdbRating)
+    watched?.map((movie) => movie.imdbRating)
   ).toFixed(1);
   const avgUserRating = average(
-    watched.map((movie) => movie.userRating)
+    watched?.map((movie) => movie.userRating)
   ).toFixed(1);
-  const avgRuntime = average(watched.map((movie) => movie.runtime)).toFixed(1);
+  const avgRuntime = average(watched?.map((movie) => movie.runtime)).toFixed(1);
 
   return (
     <div className="summary">
@@ -366,7 +366,7 @@ function WatchedSummary({ watched }) {
       <div>
         <p>
           <span>#️⃣</span>
-          <span>{watched.length} item</span>
+          <span>{watched?.length} item</span>
         </p>
         <p>
           <span>⭐️</span>
@@ -388,7 +388,7 @@ function WatchedSummary({ watched }) {
 function WatchedMovieList({ watched, onDeleteWatched }) {
   return (
     <ul className="list">
-      {watched.map((movie) => (
+      {watched?.map((movie) => (
         <WatchedMovie
           movie={movie}
           key={movie.imdbID}
