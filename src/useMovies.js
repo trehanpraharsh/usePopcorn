@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 //! Always remember to name the api key in .env file when app is created using create react app starting with "REACT_APP_yourApiKeyName"
 const KEY = process.env.REACT_APP_OMDB_API_KEY;
 
-export function useMovies(query, callback) {
+export function useMovies(query) {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -13,7 +13,7 @@ export function useMovies(query, callback) {
     function () {
       const controller = new AbortController();
 
-      callback?.();
+      // callback?.();
 
       async function fetchMovies() {
         try {

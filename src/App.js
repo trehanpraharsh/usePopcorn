@@ -13,7 +13,7 @@ export default function App() {
   const [selectedID, setSelectedID] = useState(null);
 
   //* Creating a custom hook and using it
-  const { movies, isLoading, error } = useMovies(query, handleCloseMovie);
+  const { movies, isLoading, error } = useMovies(query);
 
   // const [watched, setWatched] = useState([]);
   const [watched, setWatched] = useState(function () {
