@@ -1,3 +1,11 @@
+# usePopcorn
+
+This is a movie / series searching website which displays all the details you are looking for including the movie name, release year, cast, director, plot, genre etc.
+
+I have used advanced React.js concepts to build this. It uses the useState and useEffect hook and react forms and controlled components. The components are made from scratch including the starRating component.
+
+You can also rate your favorite movie and add the movie to your own personalised list. The data of the list will also be stored in your browser so it is a complete app.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
