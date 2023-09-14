@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import StarRating from "./StarRating";
 import { useMovies } from "./useMovies";
+import { useLocalStorageState } from "./useLocalStorageState";
 
 // const KEY = "a579345d";
 //! Always remember to name the api key in .env file when app is created using create react app starting with "REACT_APP_yourApiKeyName"
@@ -15,11 +16,13 @@ export default function App() {
   //* Creating a custom hook and using it
   const { movies, isLoading, error } = useMovies(query);
 
+  //? Custom Hook for LocalStorage
+  const [watched, setWatched] = useLocalStorageState([], "watched");
   // const [watched, setWatched] = useState([]);
-  const [watched, setWatched] = useState(function () {
-    const storedValue = localStorage.getItem("watched");
-    return JSON.parse(storedValue);
-  });
+  // const [watched, setWatched] = useState(function () {
+  //   const storedValue = localStorage.getItem("watched");
+  //   return JSON.parse(storedValue);
+  // });
 
   function handleMovieSelect(id) {
     setSelectedID((selectID) => (selectID === id ? null : id));
@@ -40,12 +43,12 @@ export default function App() {
     setWatched((watched) => watched?.filter((movie) => movie.imdbID !== id));
   }
 
-  useEffect(
-    function () {
-      localStorage.setItem("watched", JSON.stringify(watched));
-    },
-    [watched]
-  );
+  // useEffect(
+  //   function () {
+  //     localStorage.setItem("watched", JSON.stringify(watched));
+  //   },
+  //   [watched]
+  // );
 
   return (
     <>
