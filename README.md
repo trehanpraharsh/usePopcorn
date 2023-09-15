@@ -1,5 +1,9 @@
 # usePopcorn
 
+![Alt text](<Screenshot 2023-09-16 at 2.21.33 AM.png>)
+
+![Alt text](<Screenshot 2023-09-16 at 2.23.50 AM.png>)
+
 This is a movie / series searching website which displays all the details you are looking for including the movie name, release year, cast, director, plot, genre etc.
 
 I have used advanced React.js concepts to build this. It uses the useState and useEffect hook and react forms and controlled components. The components are made from scratch including the starRating component.
